@@ -159,9 +159,12 @@ def main(api_url):
 
 
         # query how much tokens of the pools sit in the fee_receiver and need to be burned
-        LPTokenContract = ape.Contract(LPTokenAddr)
-        LPbalanceInFeeReceiver = LPTokenContract.balanceOf("0xeCb456EA5365865EbAb8a2661B0c503410e9B347") / 10**18
-        print(lpSymbol + ": " + str(LPbalanceInFeeReceiver))
+        try:
+            LPTokenContract = ape.Contract(LPTokenAddr)
+            LPbalanceInFeeReceiver = LPTokenContract.balanceOf("0xeCb456EA5365865EbAb8a2661B0c503410e9B347") / 10**18
+            print(lpSymbol + ": " + str(LPbalanceInFeeReceiver))
+        except:
+            print("error")
 
         for x in tokens:
             try:
