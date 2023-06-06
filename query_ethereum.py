@@ -57,7 +57,7 @@ def main(api_url):
                 print("admin: " + admin)
                 print("")
         except:
-            print("ERROR: NO OWNER")
+            print("ERROR: NO ADMIN OR OWNER")
             print("")
 
 
@@ -69,11 +69,15 @@ def main(api_url):
         usdPrice = [token['usdPrice'] for token in tokens] or 0
         decimals = [token['decimals'] for token in tokens]
 
-        for (a, b, c, d) in zip(admin_balances, symbols, usdPrice, decimals):
-            tokenAmount = a / 10**float(d)
-            usdVaule = tokenAmount * c
-            totalUSD += usdVaule
-            print(b + ": " + str(usdVaule))
+        # this is to avoid failing because price of some tokens is "null". look for another fix!
+        try:
+            for (a, b, c, d) in zip(admin_balances, symbols, usdPrice, decimals):
+                tokenAmount = a / 10**float(d)
+                usdVaule = tokenAmount * c
+                totalUSD += usdVaule
+                print(b + ": " + str(usdVaule))
+        except:
+            pass
 
         grandTOTAL += totalUSD
         print("total unclaimed fees (usd): " + str(totalUSD))
@@ -130,4 +134,4 @@ def main(api_url):
     print("TOTAL UNCLAIMED FEES: " + str(grandTOTAL))
 
 
-main("https://api.curve.fi/api/getPools/ethereum/factory")
+main("https://api.curve.fi/api/getPools/ethereum/main")
