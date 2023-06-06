@@ -11,7 +11,7 @@ poolproxy = ape.Contract("0xd4F94D0aaa640BBb72b5EEc2D85F6D114D81a88E")
 # https://api.curve.fi/api/getPools/arbitrum/crypto
 # https://api.curve.fi/api/getPools/arbitrum/factory
 
-api1 = requests.get("https://api.curve.fi/api/getPools/arbitrum/crypto")
+api1 = requests.get("https://api.curve.fi/api/getPools/arbitrum/factory")
 api1 = api1.json()
 api1 = api1['data']['poolData']
 grandTOTAL = 0
@@ -42,11 +42,11 @@ for x in api1:
             feeReceiver = poolContract.admin_fee_receiver()
         except:
             feeReceiver = poolContract.owner()
+        if feeReceiver != '0xd4F94D0aaa640BBb72b5EEc2D85F6D114D81a88E':
+            print("WARNING: fee receiver is not PoolProxy!")
+        else:
+            pass
     except:
-        pass
-    if feeReceiver != '0xd4F94D0aaa640BBb72b5EEc2D85F6D114D81a88E':
-        print("WARNING: fee receiver is not PoolProxy!")
-    else: 
         pass
 
 
@@ -56,7 +56,7 @@ for x in api1:
         print("owner: " + owner)
         print("")
     except:
-        print("ERROR: NO OWNER")
+        print("ERROR: check facotry")
         print("")
 
 
@@ -68,6 +68,17 @@ for x in api1:
             d0 = float(tokens[0]['decimals'])
             p1 = tokens[1]['usdPrice']
             d1 = float(tokens[1]['decimals'])
+            admin_balance0 = poolContract.admin_balances(0)
+            admin_balance1 = poolContract.admin_balances(1)
+            tokenAmount0 = admin_balance0 / 10 ** d0
+            tokenAmount1 = admin_balance1 / 10 ** d1
+            tokenValue0 = tokenAmount0 * p0
+            tokenValue1 = tokenAmount1 * p1
+            sum = tokenValue0 + tokenValue1
+            totalUSD += sum
+            print(tokenValue0)
+            print(tokenValue1)
+            
         elif len(tokens) == 3:
             p0 = tokens[0]['usdPrice']
             d0 = float(tokens[0]['decimals'])
@@ -75,6 +86,21 @@ for x in api1:
             d1 = float(tokens[1]['decimals'])
             p2 = tokens[2]['usdPrice']
             d2 = float(tokens[2]['decimals'])
+            admin_balance0 = poolContract.admin_balances(0)
+            admin_balance1 = poolContract.admin_balances(1)
+            admin_balance2 = poolContract.admin_balances(2)
+            tokenAmount0 = admin_balance0 / 10 ** d0
+            tokenAmount1 = admin_balance1 / 10 ** d1
+            tokenAmount2 = admin_balance2 / 10 ** d2
+            tokenValue0 = tokenAmount0 * p0
+            tokenValue1 = tokenAmount1 * p1
+            tokenValue2 = tokenAmount2 * p2
+            sum = tokenValue0 + tokenValue1 + tokenValue2
+            totalUSD += sum
+            print(tokenValue0)
+            print(tokenValue1)
+            print(tokenValue2)
+
         elif len(tokens) == 4:
             p0 = tokens[0]['usdPrice']
             d0 = float(tokens[0]['decimals'])
@@ -84,36 +110,28 @@ for x in api1:
             d2 = float(tokens[2]['decimals'])
             p3 = tokens[3]['usdPrice']
             d3 = float(tokens[3]['decimals'])
+            admin_balance0 = poolContract.admin_balances(0)
+            admin_balance1 = poolContract.admin_balances(1)
+            admin_balance2 = poolContract.admin_balances(2)
+            admin_balance3 = poolContract.admin_balances(3)
+            tokenAmount0 = admin_balance0 / 10 ** d0
+            tokenAmount1 = admin_balance1 / 10 ** d1
+            tokenAmount2 = admin_balance2 / 10 ** d2
+            tokenAmount3 = admin_balance3 / 10 ** d3
+            tokenValue0 = tokenAmount0 * p0
+            tokenValue1 = tokenAmount1 * p1
+            tokenValue2 = tokenAmount2 * p2
+            tokenValue3 = tokenAmount3 * p3
+            sum = tokenValue0 + tokenValue1 + tokenValue2 +tokenValue3
+            totalUSD += sum
+            print(tokenValue0)
+            print(tokenValue1)
+            print(tokenValue2)
+            print(tokenValue3)
         else:
             pass
-
-        totalUSD = 0
-        admin_balance0 = poolContract.admin_balances(0)
-        tokenAmount0 = admin_balance0 / 10 ** d0
-        tokenValue0 = tokenAmount0 * p0
-        totalUSD += tokenValue0
-        print(tokenValue0)
-
-        admin_balance1 = poolContract.admin_balances(1)
-        tokenAmount1 = admin_balance1 / 10 ** d1
-        tokenValue1 = tokenAmount1 * p1
-        totalUSD += tokenValue1
-        print(tokenValue1)
-    
-        admin_balance2 = poolContract.admin_balances(2)
-        tokenAmount2 = admin_balance2 / 10 ** d2
-        tokenValue2 = tokenAmount2 * p2
-        totalUSD += tokenValue2
-        print(tokenValue2)
-
-        admin_balance3 = poolContract.admin_balances(3)
-        tokenAmount3 = admin_balance3 / 10 ** d3
-        tokenValue3 = tokenAmount3 * p3
-        totalUSD += tokenValue3
-        print(tokenValue3) 
-
     except:
-        pass
+        print("error")
     
     try:
         xcp_profit = poolContract.xcp_profit()
@@ -171,9 +189,12 @@ for x in api1:
         if burner == '0x0000000000000000000000000000000000000000':
             print("NO BURNER: " + coinSYMBOL)
     
-    LPTokenContract = ape.Contract(LPTokenADDR)
-    LPbalanceInFeeReceiver = LPTokenContract.balanceOf("0xd4F94D0aaa640BBb72b5EEc2D85F6D114D81a88E") / 10**18
-    print(lpSymbol + ": " + str(LPbalanceInFeeReceiver))
+    try:
+        LPTokenContract = ape.Contract(LPTokenADDR)
+        LPbalanceInFeeReceiver = LPTokenContract.balanceOf("0xd4F94D0aaa640BBb72b5EEc2D85F6D114D81a88E") / 10**18
+        print(lpSymbol + ": " + str(LPbalanceInFeeReceiver))
+    except:
+        pass
 
     for x in tokens:
         try:
