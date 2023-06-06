@@ -38,20 +38,24 @@ def main(api_url):
                 feeReceiver = poolContract.admin_fee_receiver()
             except:
                 feeReceiver = poolContract.owner()
+
+            if feeReceiver != '0xeCb456EA5365865EbAb8a2661B0c503410e9B347':
+                print("WARNING: fee receiver is not 0xecb!")
+            else: 
+                pass
         except:
             pass
 
-        if feeReceiver != '0xeCb456EA5365865EbAb8a2661B0c503410e9B347':
-            print("WARNING: fee receiver is not 0xecb!")
-        else: 
-            pass
-
-
         # owner of the contract
         try:
-            owner = poolContract.owner()
-            print("owner: " + owner)
-            print("")
+            try:
+                owner = poolContract.owner()
+                print("owner: " + owner)
+                print("")
+            except:
+                admin = poolContract.admin()
+                print("admin: " + admin)
+                print("")
         except:
             print("ERROR: NO OWNER")
             print("")
@@ -126,4 +130,4 @@ def main(api_url):
     print("TOTAL UNCLAIMED FEES: " + str(grandTOTAL))
 
 
-main("https://api.curve.fi/api/getPools/ethereum/main")
+main("https://api.curve.fi/api/getPools/ethereum/factory")
